@@ -1,11 +1,12 @@
 <?php
 
-require './Usuario.php';
-require './Lance.php';
-require './Leilao.php';
-require './Avaliador.php';
+namespace PHPUnit\Framework;
+require '../Usuario.php';
+require '../Lance.php';
+require '../Leilao.php';
+require '../Avaliador.php';
 
-class AvaliadorTest {
+class AvaliadorTest extends TestCase{
 
     public function testDeveEntenderLancesEmOrdemCrescente() {
         $leilao = new Leilao("Produto");
