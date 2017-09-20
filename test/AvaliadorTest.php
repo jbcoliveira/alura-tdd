@@ -1,12 +1,11 @@
 <?php
-
-namespace PHPUnit\Framework;
+//require_once 'PHPUnit/Framework/TestCase';
 require '../Usuario.php';
 require '../Lance.php';
 require '../Leilao.php';
 require '../Avaliador.php';
 
-class AvaliadorTest extends TestCase{
+class AvaliadorTest extends PHPUnit\Framework\TestCase{
 
     public function testDeveEntenderLancesEmOrdemCrescente() {
         $leilao = new Leilao("Produto");
@@ -26,7 +25,7 @@ class AvaliadorTest extends TestCase{
 
 // comparando a saida com o esperado
         $maiorEsperado = 12;
-        $menorEsperado = 10;
+        $menorEsperado = 11;
 
 
         $this->assertEquals($maiorEsperado,$leiloeiro->getMaiorLance(), 0.0001);
