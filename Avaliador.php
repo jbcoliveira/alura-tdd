@@ -4,37 +4,54 @@
 
 class Avaliador {
 
-    private $maiorLance = -INF;
-    private $menorLance = INF;
+    private $maiorDeTodos = -INF;
+    private $menorDeTodos = INF;
+    private $maiores;
 
-    
-    function getMaiorLance() {
-        return $this->maiorLance;
-    }
-
-    function getMenorLance() {
-        return $this->menorLance;
-    }
-
-    function setMaiorLance($maiorLance) {
-        $this->maiorLance = $maiorLance;
-    }
-
-    function setMenorLance($menorLance) {
-        $this->menorLance = $menorLance;
-    }
-
-    public function avalia(Leilao $leilao) {
-        foreach ($leilao->getLances() as $lance){
-            if ($lance->getValor() > $this->getMaiorLance()){
-                $this->setMaiorLance($lance->getValor());
+   public function avalia(Leilao $leilao) {
+            foreach($leilao->getLances() as $lance) {
+                if($lance->getValor() > $this->maiorDeTodos)
+                    $this->maiorDeTodos = $lance->getValor();
+                if($lance->getValor() < $this->menorDeTodos)
+                    $this->menorDeTodos = $lance->getValor();
             }
-            
-            if ($lance->getValor() < $this->getMenorLance()){                
-                $this->setMenorLance($lance->getValor());
-            }
-                
+
+            $this->pegaOsMaioresNo($leilao);
+   }
+
+  public function pegaOsMaioresNo(Leilao $leilao) {
+
+            $lances = $leilao->getLances();
+            usort($lances,function ($a,$b) {
+                if($a->getValor() == $b->getValor()) return 0;
+                return ($a->getValor() < $b->getValor()) ? 1 : -1;
+            });
+
+            $this->maiores = array_slice($lances, 0,3);
         }
+
+    public function getTresMaiores() {
+        return $this->maiores;
+    }
+
+    public function getMaiorLance() {
+        return $this->maiorDeTodos;
+    }
+
+    public function getMenorLance() {
+        return $this->menorDeTodos;
+    }
+    
+    public function getvalorMedioLances(Leilao $leilao) {
+        $qtdeLances = sizeof($leilao->getLances());        
+        $soma = 0;
+        foreach ($leilao->getLances() as $lance){
+            
+            $soma += $lance->getValor(); 
+            
+        }
+        
+        return $soma / $qtdeLances ;
     }
 
 }
