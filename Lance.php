@@ -15,5 +15,11 @@
 		public function getValor() {
 			return $this->valor;
 		}
+                
+                function setValor($valor) {
+                    $this->valor = $valor;
+                }
+
+
 	}
 ?>
