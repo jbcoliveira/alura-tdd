@@ -1,53 +1,68 @@
 <?php
 
-//require_once 'PHPUnit/Framework/TestCase';
-require '../Usuario.php';
-require '../Lance.php';
-require '../Leilao.php';
-require '../Avaliador.php';
+require_once 'CriadorDeLeilao.php';
+require_once '../Avaliador.php';
 
 class AvaliadorTest extends PHPUnit\Framework\TestCase {
 
+    private $leiloeiro;
+    private $usuario1;
+    private $usuario2;
+    private $usuario3;
+
+    public function setUp() {
+        $this->leiloeiro = new Avaliador();
+        $this->usuario1 = new Usuario("usuario1");
+        $this->usuario2 = new Usuario("usuario2");
+        $this->usuario3 = new Usuario("usuario3");
+    }
+
+    public function tearDown() {
+//
+    }
+
+    public static function setUpBeforeClass() {
+//        var_dump("before class");
+    }
+
+    public static function tearDownAfterClass() {
+  //      var_dump("after class");
+    }
+
     public function testDeveEntenderLancesEmOrdemCrescente() {
-        $leilao = new Leilao("Produto");
+
+        $criador = new CriadorDeLeilao();
+
+        $leilao = $criador->para("Produto")
+                ->lance($this->usuario1, 12)
+                ->lance($this->usuario2, 11)
+                ->lance($this->usuario3, 10)
+                ->constroi();
 
 
-        $usuario1 = new Usuario("usuario1");
-        $usuario2 = new Usuario("usuario2");
-        $usuario3 = new Usuario("usuario3");
-
-        $leilao->propoe(new Lance($usuario1, 12));
-        $leilao->propoe(new Lance($usuario2, 11));
-        $leilao->propoe(new Lance($usuario3, 10));
-
-        $leiloeiro = new Avaliador();
-
-        $leiloeiro->avalia($leilao);
-
-
+        $this->leiloeiro->avalia($leilao);
 
 // comparando a saida com o esperado
         $maiorEsperado = 12;
         $menorEsperado = 10;
 
 
-        $this->assertEquals($maiorEsperado, $leiloeiro->getMaiorLance(), 0.0001);
-        $this->assertEquals($menorEsperado, $leiloeiro->getMenorLance(), 0.0001);
+        $this->assertEquals($maiorEsperado, $this->leiloeiro->getMaiorLance(), 0.0001);
+        $this->assertEquals($menorEsperado, $this->leiloeiro->getMenorLance(), 0.0001);
 
-        $this->assertEquals(11, $leiloeiro->getvalorMedioLances($leilao), 0.0001);
+        $this->assertEquals(11, $this->leiloeiro->getvalorMedioLances($leilao), 0.0001);
     }
 
     public function testDeveEntenderUmLance() {
-        $leilao = new Leilao("Produto");
+        $criador = new CriadorDeLeilao();
+
+        $leilao = $criador->para("Produto")
+                ->lance($this->usuario1, 12)
+                ->constroi();
 
 
-        $usuario1 = new Usuario("usuario1");
 
-        $leilao->propoe(new Lance($usuario1, 12));
-
-        $leiloeiro = new Avaliador();
-
-        $leiloeiro->avalia($leilao);
+        $this->leiloeiro->avalia($leilao);
 
 
 
@@ -56,157 +71,128 @@ class AvaliadorTest extends PHPUnit\Framework\TestCase {
         $menorEsperado = 12;
 
 
-        $this->assertEquals($maiorEsperado, $leiloeiro->getMaiorLance(), 0.0001);
-        $this->assertEquals($menorEsperado, $leiloeiro->getMenorLance(), 0.0001);
+        $this->assertEquals($maiorEsperado, $this->leiloeiro->getMaiorLance(), 0.0001);
+        $this->assertEquals($menorEsperado, $this->leiloeiro->getMenorLance(), 0.0001);
     }
 
     public function testDeveEntenderLancesEmOrdemAleatoria() {
-        $leilao = new Leilao("Produto");
+        $criador = new CriadorDeLeilao();
+
+        $leilao = $criador->para("Produto")
+                ->lance($this->usuario1, 1)
+                ->lance($this->usuario2, 5)
+                ->lance($this->usuario1, 10)
+                ->lance($this->usuario2, 6)
+                ->lance($this->usuario1, 2)
+                ->lance($this->usuario2, 9)
+                ->constroi();
 
 
-        $usuario1 = new Usuario("usuario1");
-        $usuario2 = new Usuario("usuario2");
-
-
-        $leilao->propoe(new Lance($usuario1, 1));
-        $leilao->propoe(new Lance($usuario2, 5));
-        $leilao->propoe(new Lance($usuario1, 10));
-        $leilao->propoe(new Lance($usuario2, 6));
-        $leilao->propoe(new Lance($usuario1, 2));
-        $leilao->propoe(new Lance($usuario2, 9));
-
-
-        $leiloeiro = new Avaliador();
-
-        $leiloeiro->avalia($leilao);
-
-
+        $this->leiloeiro->avalia($leilao);
 
 // comparando a saida com o esperado
         $maiorEsperado = 10;
         $menorEsperado = 1;
 
 
-        $this->assertEquals(10, $leiloeiro->getMaiorLance(), 0.0001);
-        $this->assertEquals(1, $leiloeiro->getMenorLance(), 0.0001);
+        $this->assertEquals(10, $this->leiloeiro->getMaiorLance(), 0.0001);
+        $this->assertEquals(1, $this->leiloeiro->getMenorLance(), 0.0001);
     }
 
     public function testDeveEntenderLancesEmOrdemDecrecente() {
-        $leilao = new Leilao("Produto");
+        $criador = new CriadorDeLeilao();
 
+        $leilao = $criador->para("Produto")
+                ->lance($this->usuario1, 1)
+                ->lance($this->usuario2, 5)
+                ->lance($this->usuario1, 2)
+                ->lance($this->usuario2, 4)
+                ->lance($this->usuario1, 9)
+                ->lance($this->usuario2, 15)
+                ->constroi();
 
-        $usuario1 = new Usuario("usuario1");
-        $usuario2 = new Usuario("usuario2");
-
-
-        $leilao->propoe(new Lance($usuario1, 15));
-        $leilao->propoe(new Lance($usuario2, 13));
-        $leilao->propoe(new Lance($usuario1, 10));
-        $leilao->propoe(new Lance($usuario2, 9));
-        $leilao->propoe(new Lance($usuario1, 7));
-        $leilao->propoe(new Lance($usuario2, 5));
-
-
-        $leiloeiro = new Avaliador();
-
-        $leiloeiro->avalia($leilao);
+        $this->leiloeiro->avalia($leilao);
 
 
 
 // comparando a saida com o esperado
-        $menorEsperado = 5;
+        $menorEsperado = 1;
         $maiorEsperado = 15;
 
 
-        $this->assertEquals(5, $leiloeiro->getMenorLance(), 0.0001);
-        $this->assertEquals(15, $leiloeiro->getMaiorLance(), 0.0001);
+        $this->assertEquals($menorEsperado, $this->leiloeiro->getMenorLance(), 0.0001);
+        $this->assertEquals($maiorEsperado, $this->leiloeiro->getMaiorLance(), 0.0001);
     }
 
     public function testPegaOsTresMaiores() {
-        $leilao = new Leilao("Produto");
+        $criador = new CriadorDeLeilao();
+
+        $leilao = $criador->para("Produto")
+                ->lance($this->usuario1, 1)
+                ->lance($this->usuario2, 5)
+                ->lance($this->usuario1, 2)
+                ->lance($this->usuario2, 4)
+                ->lance($this->usuario1, 9)
+                ->lance($this->usuario2, 15)
+                ->constroi();
+
+        $this->leiloeiro->avalia($leilao);
 
 
-        $usuario1 = new Usuario("usuario1");
-        $usuario2 = new Usuario("usuario2");
-
-
-        $leilao->propoe(new Lance($usuario1, 10));
-        $leilao->propoe(new Lance($usuario1, 15));
-        $leilao->propoe(new Lance($usuario2, 13));
-        $leilao->propoe(new Lance($usuario2, 9));
-        $leilao->propoe(new Lance($usuario1, 7));
-
-
-
-        $leiloeiro = new Avaliador();
-
-        $leiloeiro->avalia($leilao);
-
-
-        $this->assertEquals(15, $leiloeiro->getTresMaiores()[0]->getValor());
-        $this->assertEquals(13, $leiloeiro->getTresMaiores()[1]->getValor());
-        $this->assertEquals(10, $leiloeiro->getTresMaiores()[2]->getValor());
-
-        
+        $this->assertEquals(15, $this->leiloeiro->getTresMaiores()[0]->getValor());
+        $this->assertEquals(9, $this->leiloeiro->getTresMaiores()[1]->getValor());
+        $this->assertEquals(5, $this->leiloeiro->getTresMaiores()[2]->getValor());
     }
-    
-    
+
     public function testApenasDoisLance() {
-        $leilao = new Leilao("Produto");
+        $criador = new CriadorDeLeilao();
+
+        $leilao = $criador->para("Produto")
+                ->lance($this->usuario1, 1)
+                ->lance($this->usuario1, 5) // vai ignorar, pois trata-se de segundo lance seguido
+                ->constroi();
 
 
-        $usuario1 = new Usuario("usuario1");
-        $usuario2 = new Usuario("usuario2");
+        $this->leiloeiro->avalia($leilao);
 
 
-        $leilao->propoe(new Lance($usuario1, 10));
-        $leilao->propoe(new Lance($usuario1, 15));
-
-
-
-        $leiloeiro = new Avaliador();
-
-        $leiloeiro->avalia($leilao);
-
-
-        $this->assertEquals(2, count($leilao->getLances()));
+        $this->assertEquals(1, count($leilao->getLances()));
     }
 
+    
+    /**
+     * @expectedException     Exception
+     */
     public function testNenhumLance() {
-        $leilao = new Leilao("Produto");
+        $criador = new CriadorDeLeilao();
 
+        $leilao = $criador->para("Produto")
+                ->constroi();
 
-        $usuario1 = new Usuario("usuario1");
-        $usuario2 = new Usuario("usuario2");
+        $this->leiloeiro->avalia($leilao);
 
-
-
-        $leiloeiro = new Avaliador();
-
-        $leiloeiro->avalia($leilao);
-
-
-        $this->assertEquals(NULL, count($leilao->getLances()));
     }
 
+    
+    
 }
 
 /*
-$leilao = new Leilao("Produto");
+  $leilao = new Leilao("Produto");
 
 
-        $usuario1 = new Usuario("usuario1");
-        $usuario2 = new Usuario("usuario2");
-        $usuario3 = new Usuario("usuario3");
+  $usuario1 = new Usuario("usuario1");
+  $usuario2 = new Usuario("usuario2");
+  $usuario3 = new Usuario("usuario3");
 
-        $leilao->propoe(new Lance($usuario1, 12));
-        $leilao->propoe(new Lance($usuario2, 11));
-        $leilao->propoe(new Lance($usuario3, 10));
+  $leilao->propoe(new Lance($usuario1, 12));
+  $leilao->propoe(new Lance($usuario2, 11));
+  $leilao->propoe(new Lance($usuario3, 10));
 
-        $leiloeiro = new Avaliador();
 
-        $leiloeiro->avalia($leilao);
-     
-        echo $leiloeiro->getvalorMedioLances($leilao);
+
+  $this->leiloeiro->avalia($leilao);
+
+  echo  $this->leiloeiro->getvalorMedioLances($leilao);
  * 
  */

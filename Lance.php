@@ -4,6 +4,10 @@
 		private $valor;
 		
 		function __construct(Usuario $usuario,$valor) {
+                        if ($valor <= 0){
+                            throw new InvalidArgumentException ("Valor menor ou igual a ZERO!");
+                        }
+                            
 			$this->usuario = $usuario;
 			$this->valor = $valor;
 		}
@@ -22,4 +26,3 @@
 
 
 	}
-?>
